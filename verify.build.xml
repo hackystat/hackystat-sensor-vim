@@ -1,0 +1,3 @@
+<project name="Vim" default="verify">
+  <target name="verify"/>
+</project>

@@ -1,0 +1,25 @@
+<project name="Vim" default="build">
+  <description>
+  Provides a sensor for the Vim Editor that records DevEvent event data.
+  </description>
+
+  <!-- Always make environment variables available with the "env." prefix. --> 
+  <property environment="env"/> 
+
+  <!-- Make sure that the SensorBase library is available . --> 
+  <available file="${env.HACKYSTAT_SENSORSHELL_HOME}/sensorshell.jar" type="file" property="hackystat.sensorshell.available"/>
+  <fail message="This package requires the Hackystat SensorShell to be installed and HACKYSTAT_SENSORSHELL_HOME defined" unless="hackystat.sensorshell.available"/>   
+
+  <target name="clean" description="Delete build/ directory and top-level jar files.">
+    <delete>
+      <fileset dir="${basedir}" includes="*.jar"/> 
+    </delete>
+    <delete dir="${build.dir}"/> 
+  </target>
+
+  <target name="convertLineEndings" description="Makes line endings compatible with host platform.">
+    <fixcrlf srcdir="${basedir}" includes="*.build.xml"/>
+  </target>
+
+</project>
+
