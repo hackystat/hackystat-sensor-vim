@@ -1,5 +1,5 @@
  " Vim global plugin for Hackystat sensor
- " Last Change: 2006 Feb 16
+ " Last Change: 2007 July 30
  " Maintainer: Dan Port <dport@hawaii.edu>
 
  " Description:
@@ -21,13 +21,15 @@
 " - check for already running java sensor process
 " - invoke only clean, known bash or csh shell
 " - staleness timestamping
-
+" - report other interesting Vim events to Vim sensor (only file size changes
+"   now)
+   
 " Use Vim defaults while :source'ing this file.
 let save_cpo = &cpo
 set cpo&vim
 
 " Define the location of the sensor.properties file here
-let s:HSsensorpropfile = $HOME."/.hackystat/sensor.properties"
+let s:HSsensorpropfile = $HOME."/.hackystat/v8.sensor.properties"
 
 " Set the appropriate file redirect that can overwrite an existing file
 if $SHELL =~ "bash"
@@ -63,22 +65,28 @@ endfunction
 
 " Parse the sensor.properties file if it can be found and set env vars
 if filereadable(s:HSsensorpropfile)
-	call SetEnvVars(4,"ENABLE_VIM_SENSOR","HACKYSTAT_VIM_SENSOR_DATA_FILE","VIM_SWAP_UPDATE_INTERVAL","VIM_SWAP_CHARACTER_UPDATE_INTERVAL")
+	call SetEnvVars(4,"HACKYSTAT_VIM_SENSOR_DATA_FILE","VIM_SWAP_UPDATE_INTERVAL","VIM_SWAP_CHARACTER_UPDATE_INTERVAL", "HACKYSTAT_SENSORSHELL_HOME")
 else 
 	echo "HS sensor.properties file NOT found"
 	finish
 endif
 
-" Only use if ENABLE_VIM_SENSOR exists and is set to true
-if !exists("$ENABLE_VIM_SENSOR") || $ENABLE_VIM_SENSOR != "true"
-	finish
-endif
-
+let $HACKYSTAT_VIM_SENSOR_DATA_FILE = expand($HACKYSTAT_VIM_SENSOR_DATA_FILE)
 if !exists("$HACKYSTAT_VIM_SENSOR_DATA_FILE")
 	echo "$HACKYSTAT_VIM_SENSOR_DATA_FILE not defined - using default"
 	let $HACKYSTAT_VIM_SENSOR_DATA_FILE = $HOME."/.hackystat/vim/HS_VIM_DATA.dat"
 endif
 
+let $HACKYSTAT_SENSORSHELL_HOME = expand($HACKYSTAT_SENSORSHELL_HOME)
+if !exists("$HACKYSTAT_SENSORSHELL_HOME")
+	echo "$HACKYSTAT_SENSORSHELL_HOME not defined and required! Vim sensor cannot start"
+	finish
+endif
+
+if !filereadable($HACKYSTAT_SENSORSHELL_HOME)
+	echo "Can't read sensorshell jar at ".$HACKYSTAT_SENSORSHELL_HOME." Does this file exist? Vim sensor cannot start."
+"	finish
+endif
 
 " These are the autocommands that repspond to VIM events that may change
 " the current buffer being used. When the buffer changes, the location of 
@@ -114,10 +122,9 @@ augroup HackystatSensor
 
 " Map <CR> to UpdateHSData(). Between this and CursorHold the current buffer name and size data
 " should generally be accurate. The only exception is when user leaves Vim in command mode
-" or does not hit <CR> for a very long while when typing.
-" UPDATED: execute command below.
+" or does not hit <CR> for a very long while when typing
 let letter = "<CR>"
-execute "inoremap <silent>" letter "<ESC>:call <SID>s:UpdateHSDataOnCR()<CR>" . letter 
+execute "inoremap <silent>" letter "<ESC>:call <SID>s:UpdateHSDataOnCR()<CR>" . letter
  
 " This function is called when Vim first starts. It sets the time interval  
 " the swapfile is updated and lets the user know the sensor
@@ -142,7 +149,7 @@ endif
 	let &updatecount=$VIM_SWAP_CHARACTER_UPDATE_INTERVAL
  
 " start the VimHackystatSensor process
-	let tmp = '(cd '.$HOME.'/.hackystat/vim; java -cp .:sensorshell.jar:sensor.vim.jar org.hackystat.sensor.vim.HSVimSensor -silent)'	
+	let tmp = '(cd '.$HOME.'/.hackystat/vim; java -cp .:'.$HACKYSTAT_SENSORSHELL_HOME.' HSVimSensor -silent)'	
 	let tmp = tmp.' >& /dev/null &'
 	call system( tmp )
 " make sure a vim data file exists before VimHackystatSensor starts <TBD>
@@ -215,14 +222,13 @@ function ByteCount()
       if bufsize < 0
           let bufsize = 0
       endif
+      " add commas
+      let remain = bufsize
+      let bufsize = ""
+      while strlen(remain) > 3
+          let bufsize = "," . strpart(remain, strlen(remain) - 3) . bufsize
+          let remain = strpart(remain, 0, strlen(remain) - 3)
+      endwhile
+      let bufsize = remain . bufsize
       return bufsize
   endfunction
-
-function SensorData()
-let tms = localtime()
-	let $HACKYSTAT_VIM_SENSOR_DATA = "file:".expand("%:p")." chars:".CharCount()." bytes:".ByteCount(). " timestamp:".tms 
-	return $HACKYSTAT_VIM_SENSOR_DATA
-endfunction
-
-let &cpo = save_cpo
-
