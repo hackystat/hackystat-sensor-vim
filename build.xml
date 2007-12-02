@@ -47,6 +47,9 @@
     <javac srcdir="${src.dir}" destdir="${build.dir}/classes">
       <classpath refid="compile.classpath" />
     </javac>
+    <copy todir="${basedir}">
+      <fileset file="${build.dir}/classes/org/hackystat/sensor/vim/HSVimSensor.class"/>
+    </copy>
   </target>
 
   <target name="clean" description="Delete build directory.">
