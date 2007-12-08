@@ -25,10 +25,18 @@
   <property name="version" value="${majorVersionNumber}.${minorVersionNumber}.${DAYSTAMP}" />
 
   <!-- Hackystat sensor configuration information. -->
+  <import file="hackystat.build.xml"/>
   <property name="hackystat.verbose.mode" value="true" />
+  <property name="hackystat.enable" value="true" />
+
+  <!-- define hackystat.enabled if hackystat.enable is true, so we can use it in an 'if' clause -->
+  <condition property="hackystat.enabled">
+    <istrue value="${hackystat.enable}"/>
+  </condition>
 
   <!-- Basic directory structure. --> 
   <property name="src.dir" location="${basedir}/src" />
+  <property name="lib.dir" location="${basedir}/lib" />
   <property name="build.dir" location="${basedir}/build" />
 		
   <!-- Make sure that the SensorShell is available . --> 

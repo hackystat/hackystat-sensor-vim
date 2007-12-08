@@ -1,3 +1,22 @@
-<project name="Vim" default="verify">
-  <target name="verify"/>
+<project name="verify" default="verify">
+  <description>
+    Runs junit, pmd, checkstyle, findbugs, and javadoc, failing the build if problems found.
+    Invocation: ant -f verify.build.xml
+  </description>
+
+  <!-- First, override the default settings of these properties. -->
+  <property name="javadoc.failonerror" value="true"/>
+  <property name="pmd.failonerror" value="true"/>
+  <property name="findbugs.failOnError" value="true"/>  
+  <property name="checkstyle.failOnViolation" value="true"/> 
+  <property name="junit.haltonfailure" value="true"/>
+
+  <!-- Now import the target definitions. -->
+  <import file="sclc.build.xml"/>
+  
+  <target name="verify" 
+    depends="clean, compile, sclc" 
+    description="Invoke analyzers, fail if any errors found.">
+  </target>
+  
 </project>
