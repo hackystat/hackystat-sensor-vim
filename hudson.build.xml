@@ -1,0 +1,34 @@
+<project name="hudson" default="hudson.basic">
+  <description>
+    Targets for the Hudson continuous integration server. 
+  </description>
+
+  <!-- First, override the default settings of these properties. -->
+  <property name="javadoc.failonerror" value="true"/>
+  <property name="pmd.failonerror" value="true"/>
+  <property name="findbugs.failOnError" value="true"/>  
+  <property name="checkstyle.failOnViolation" value="true"/> 
+  <property name="junit.haltonfailure" value="true"/>
+
+  <!-- Now import the target definitions. -->
+    
+  <!--
+  <import file="javadoc.build.xml"/>
+  <import file="pmd.build.xml"/>
+  <import file="findbugs.build.xml"/>
+  <import file="checkstyle.build.xml"/>
+  <import file="junit.build.xml"/>
+  <import file="emma.build.xml"/>
+  <import file="sclc.build.xml"/>
+  <import file="jar.build.xml"/>
+  -->
+
+  <import file="dist.build.xml"/>
+
+  <target name="hudson.basic" 
+    depends="clean, compile, dist" 
+    description="Fast build for production purposes. No sensors.">
+      
+  </target>
+  
+</project>
