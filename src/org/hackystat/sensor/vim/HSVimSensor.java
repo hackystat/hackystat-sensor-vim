@@ -52,7 +52,7 @@ public class HSVimSensor {
    * 
    * @param args Arguments.
    */
-  public static void main(String args[]) {
+  public static void main(String args[]) throws SensorShellException {
     HSVimSensor theSensor = new HSVimSensor();
     // Probably should use more general args[] parsing here
     if (args.length > 0 && args[0].equals("-silent")) {
@@ -66,7 +66,7 @@ public class HSVimSensor {
    * Initializes VIM sensor.
    * 
    */
-  private void initSensor() {
+  private void initSensor() throws SensorShellException {
     // Are we running silent?
     if (isSilentMode) {
       // try{
@@ -159,7 +159,7 @@ public class HSVimSensor {
    * Collects VIM editing data.
    * 
    */
-  private void senseVimData() {
+  private void senseVimData() throws SensorShellException {
     Map<String, String> currVimData = this.getVimHSData();
     if (currVimData != null) {
       // Invoke statechange, which adds to the SensorData instance using
@@ -192,7 +192,7 @@ public class HSVimSensor {
    * 
    * @return Sensor data.
    */
-  private Map<String, String> getVimHSData() {
+  private Map<String, String> getVimHSData() throws SensorShellException {
     long currentBufferSize = this.readCurrentVimDataFile();
 
     outStream.println("currVimFile=" + currVimFile.toURI().toString());
@@ -225,7 +225,7 @@ public class HSVimSensor {
    * 
    * @return current Vim buffer size.
    */
-  private long readCurrentVimDataFile() {
+  private long readCurrentVimDataFile() throws SensorShellException {
     currVimFile = null;
     if (vimDataFile != null && vimDataFile.exists()) {
       try {
