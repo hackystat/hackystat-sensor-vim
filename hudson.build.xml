@@ -1,4 +1,4 @@
-<project name="hudson" default="hudson.basic">
+<project name="hudson.vim" default="hudson.basic">
   <description>
     Targets for the Hudson continuous integration server. 
   </description>
@@ -29,7 +29,13 @@
     depends="clean, compile, dist" 
     description="Fast build for production purposes. No sensors."/>
       
-  <target name="hudson.daily" description="Do nothing for daily build QA."/>
+  <target name="hudson.daily.build" description="Do nothing for daily build QA." /> 
+  <target name="hudson.daily.junit" description="Do nothing for daily build QA." /> 
+  <target name="hudson.daily.javancss" description="Do nothing for daily build QA." /> 
+  <target name="hudson.daily.emma" description="Do nothing for daily build QA." /> 
 
   
 </project>
+
+
+
