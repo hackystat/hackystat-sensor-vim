@@ -3,6 +3,8 @@
     Runs junit, pmd, checkstyle, findbugs, and javadoc, failing the build if problems found.
     Invocation: ant -f verify.build.xml
   </description>
+  
+  <import file="build.xml"/>
 
   <!-- First, override the default settings of these properties. -->
   <property name="javadoc.failonerror" value="true"/>
@@ -11,11 +13,8 @@
   <property name="checkstyle.failOnViolation" value="true"/> 
   <property name="junit.haltonfailure" value="true"/>
 
-  <!-- Now import the target definitions. -->
-  <import file="sclc.build.xml"/>
-  
   <target name="verify" 
-    depends="clean, compile, sclc" 
+    depends="clean, compile" 
     description="Invoke analyzers, fail if any errors found.">
   </target>
   

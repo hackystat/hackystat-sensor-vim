@@ -11,7 +11,7 @@
  
     <mkdir dir="${dist.tmp.dir}/${dist.name}" />
     <copy todir="${dist.tmp.dir}/${dist.name}">
-      <fileset dir="${basedir}" excludes="javadoc/**, dist-tmp/**, bin/**, **/.svn/*, **/*~, tmp/**, build/classes/**, src/**" />
+      <fileset dir="${basedir}" excludes="lib/**, javadoc/**, dist-tmp/**, bin/**, **/.svn/*, **/*~, tmp/**, build/classes/**, src/**" />
     </copy>
 
     <!-- Create the zip distribution of this system, and then delete the tmp dir. -->
