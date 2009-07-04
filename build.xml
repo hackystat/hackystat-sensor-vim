@@ -2,7 +2,7 @@
   <description>
   The basic build file for the Hackystat Vim sensor's complement polling process HSVimSensor.
   </description>
-  
+
 
   <!-- Basic directory structure. -->
   <property name="src.dir" location="${basedir}/src" />
@@ -42,8 +42,10 @@
   <property name="configfiles.dir" location="${lib.dir}/configfiles" />
   <mkdir dir="${configfiles.dir}" />
 
-  <ivy:retrieve organisation="org.hackystat" module="hackystat-sensor-shell" revision="latest.integration" pattern="${lib.dir}/hackystat-sensor-shell/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="hackystat-sensor-shell.path" location="${lib.dir}/hackystat-sensor-shell/sensorshell.jar" />
+  <target name="install-libraries" description="Install libraries needed for compilation">
+    <ivy:retrieve organisation="org.hackystat" module="hackystat-sensor-shell" revision="latest.integration" pattern="${lib.dir}/hackystat-sensor-shell/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="hackystat-sensor-shell.path" location="${lib.dir}/hackystat-sensor-shell/sensorshell.jar" />
+  </target>
 
   <!-- Basic properties for this system. -->
   <property name="system.name" value="hackystat-sensor-vim" />
@@ -59,23 +61,23 @@
     <path refid="hackystat-sensor-shell.path" />
   </path>
 
-  <target name="compile" description="Compiles the code.">
-    <!-- Now compile the code into build/classes -->   
-    <mkdir dir="${build.dir}/classes"/>
+  <target name="compile" depends="install-libraries" description="Compiles the code.">
+    <!-- Now compile the code into build/classes -->
+    <mkdir dir="${build.dir}/classes" />
     <javac srcdir="${src.dir}" destdir="${build.dir}/classes">
       <classpath refid="compile.classpath" />
     </javac>
     <copy todir="${basedir}">
-      <fileset file="${build.dir}/classes/org/hackystat/sensor/vim/HSVimSensor.class"/>
+      <fileset file="${build.dir}/classes/org/hackystat/sensor/vim/HSVimSensor.class" />
     </copy>
   </target>
 
   <target name="clean" description="Delete build directory.">
-    <delete dir="${build.dir}"/> 
+    <delete dir="${build.dir}" />
   </target>
 
   <target name="convertLineEndings" description="Makes line endings compatible with host platform.">
-    <fixcrlf srcdir="${basedir}" includes="*.build.xml"/>
+    <fixcrlf srcdir="${basedir}" includes="*.build.xml" />
   </target>
 </project>
 
